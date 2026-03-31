@@ -4,7 +4,7 @@
 
 ## Functional Requirements
 Functional requirements are inspired by an overview of message queue [video](https://www.youtube.com/watch?v=1ISRd0bS714):
-- [ ] APIs via CLI
+- [ ] APIs
   - [ ] Consumers APIs
     - When started developing, link this to the API section
   - [ ] Producers APIs
@@ -23,3 +23,15 @@ Functional requirements are inspired by an overview of message queue [video](htt
 - [ ] Message Replay mechanism
 
 ## Non-functional Requirements
+
+## APIs
+Besides the Kafka server implementation, I'm also going to write a Kafka client library so producers/consumers can easily use it.
+### Producer APIs
+- connect to a Kafka server (broker)
+- set the topic
+- produce it
+### Consumer APIs
+- connect to a Kafka server
+- set the topic
+- choose partition
+- consumes it
