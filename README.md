@@ -3,7 +3,7 @@
 - C++23 Standard
 - At least `gcc-14/g++-14`
 
-To compile, in root directory, run:
+To compile and run, in root directory, run:
 ```
 mkdir build
 cmake -S . -B build -DCMAKE_CXX_COMPILER=g++-14
