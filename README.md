@@ -1,4 +1,15 @@
 # Message Queue
+## System Requirements
+- C++23 Standard
+- At least `gcc-14/g++-14`
+
+To compile, in root directory, run:
+```
+mkdir build
+cmake -S . -B build -DCMAKE_CXX_COMPILER=g++-14
+cd build
+make && ./MessageQueue
+```
 ## Architectural Design
 [MessageQueue_V1](https://drive.google.com/file/d/19TWJBxTqIwX-nk3NQcdMmgxa18oyShT9/view?usp=drive_link).
 
