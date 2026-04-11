@@ -1,85 +1,92 @@
+#include "spdlog/spdlog.h"
+#include <chrono>
+#include <ctime>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
-#include <chrono>
-#include <sys/socket.h>
-#include "spdlog/spdlog.h"
 
 #include <asio.hpp>
-#include <asio/ts/buffer.hpp>
-#include <asio/ts/internet.hpp>
+using namespace asio::ip;
 
-std::vector<char> responseBuf(1024);
-void ReadSome(asio::ip::tcp::socket &socket)
-{
-    socket.async_read_some(asio::buffer(responseBuf.data(), responseBuf.size()),
-                           [&](const asio::error_code &ec, std::size_t bytesRead)
-                           {
-                               if (!ec)
-                               {
-                                   SPDLOG_INFO("Bytes read: {}", bytesRead);
-                                   for (int i = 0; i < bytesRead; ++i)
-                                   {
-                                       std::cout << responseBuf[i];
-                                   }
+constexpr unsigned short PORT_NUM = 10001;
 
-                                   ReadSome(socket);
-                               }
-                               else
-                               {
-                                   SPDLOG_INFO("Error message: {}", ec.message());
-                               }
-                           });
+std::string make_daytime_string() {
+    using namespace std; // For time_t, time and ctime;
+    time_t now = time(0);
+    return ctime(&now);
 }
-int main()
-{
-    asio::error_code ec;
 
-    asio::io_context context;
+class tcp_connection : std::enable_shared_from_this<tcp_connection> {
+  public:
+    typedef std::shared_ptr<tcp_connection> ptr;
 
-    // fake work to keep context running
-    auto workGuard = asio::make_work_guard(context);
-
-    // let the context run on another thread
-    std::thread thrdCtx{[&]()
-                        { context.run(); }};
-
-    asio::ip::tcp::endpoint endpoint{asio::ip::make_address("52.71.108.149", ec), 80};
-
-    asio::ip::tcp::socket socket(context);
-
-    socket.connect(endpoint, ec);
-
-    if (!ec)
-    {
-        SPDLOG_INFO("Connected!\n");
-    }
-    else
-    {
-        std::cout << "Failed to connect to server: " << ec.message() << "\n";
-        return 0;
+    static ptr create_conn_ptr(asio::io_context &io_context) {
+        return std::shared_ptr<tcp_connection>(new tcp_connection{io_context});
     }
 
-    if (socket.is_open())
-    {
-        ReadSome(socket);
+    tcp::socket &get_socket() { return socket_; }
+    void start() {
+        message_ = make_daytime_string();
+        SPDLOG_INFO("Prepare sending message back to client");
+        asio::async_write(socket_, asio::buffer(message_),
+                          std::bind(&tcp_connection::handle_write, this,
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+    }
 
-        std::string request =
-            "GET / HTTP/1.1\r\n"
-            "Host: httpbin.org\r\n"
-            "Connection: close\r\n\r\n";
+    void handle_write(const asio::error_code &ec, size_t bytes_transferred) {
+        SPDLOG_DEBUG("Try print ec: {}", ec.message());
+        SPDLOG_INFO("I've sent {} bytes back!", bytes_transferred);
+    }
 
-        size_t bytes_written = socket.write_some(asio::buffer(request.data(), request.size()), ec);
+  private:
+    tcp::socket socket_;
+    std::string message_;
+    tcp_connection(asio::io_context &io_context) : socket_{io_context} {}
+};
 
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(10000ms);
+class tcp_server {
+  public:
+    tcp_server() {
+        SPDLOG_INFO("Starting TCP Server!");
+        start_accept();
+        io_context_.run();
+    }
+    asio::io_context &get_io_context() { return io_context_; }
 
-        context.stop();
-        if (thrdCtx.joinable())
-        {
-            thrdCtx.join();
+  private:
+    asio::io_context io_context_{};
+    tcp::acceptor acceptor_{io_context_, tcp::endpoint{tcp::v4(), PORT_NUM}};
+
+    void start_accept() {
+        tcp_connection::ptr conn_ptr =
+            tcp_connection::create_conn_ptr(io_context_);
+
+        acceptor_.async_accept(
+            conn_ptr->get_socket(),
+            std::bind(
+                &tcp_server::handle_accept, this, conn_ptr,
+                std::placeholders::_1)); // TODO: check if std::placeholders::_1
+                                         // actually works?
+    }
+
+    void handle_accept(tcp_connection::ptr new_conn,
+                       const asio::error_code &ec) {
+        SPDLOG_INFO("Accepted a connection!");
+        SPDLOG_DEBUG("Try print ec: {}", ec.message());
+        if (!ec) {
+            new_conn->start();
         }
+        start_accept();
     }
+};
 
+int main() {
+    try {
+        tcp_server server{};
+    } catch (std::exception &e) {
+        SPDLOG_ERROR("Exception: {}", e.what());
+    }
     return 0;
 }
