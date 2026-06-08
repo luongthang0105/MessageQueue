@@ -70,6 +70,8 @@ class tcp_server {
         if (!ec) {
             new_conn->start();
         }
+
+        // calling this again to start accepting other connections as well
         start_accept();
     }
 
