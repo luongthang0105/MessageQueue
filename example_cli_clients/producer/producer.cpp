@@ -7,7 +7,7 @@ using asio::ip::tcp;
 int main(int argc, char *argv[]) {
     try {
         if (argc != 3) {
-            std::cerr << "Usage: producer <host>:<port>" << std::endl;
+            std::cerr << "Usage: ./MQProducer <host> <port>" << std::endl;
             return 1;
         }
 
