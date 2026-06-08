@@ -19,7 +19,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(asio)
 
-add_executable(MessageQueue main.cpp)
+add_executable(MessageQueue src/main.cpp)
 
 target_link_libraries(MessageQueue PRIVATE spdlog::spdlog)
 
