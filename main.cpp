@@ -47,14 +47,6 @@ class tcp_connection : std::enable_shared_from_this<tcp_connection> {
 };
 
 class tcp_server {
-  public:
-    tcp_server() {
-        SPDLOG_INFO("Starting TCP Server!");
-        start_accept();
-        io_context_.run();
-    }
-    asio::io_context &get_io_context() { return io_context_; }
-
   private:
     asio::io_context io_context_{};
     tcp::acceptor acceptor_{io_context_, tcp::endpoint{tcp::v4(), PORT_NUM}};
@@ -80,6 +72,14 @@ class tcp_server {
         }
         start_accept();
     }
+
+  public:
+    tcp_server() {
+        SPDLOG_INFO("Starting TCP Server!");
+        start_accept();
+        io_context_.run();
+    }
+    asio::io_context &get_io_context() { return io_context_; }
 };
 
 int main() {
