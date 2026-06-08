@@ -22,7 +22,7 @@ class tcp_connection : std::enable_shared_from_this<tcp_connection> {
     typedef std::shared_ptr<tcp_connection> ptr;
 
     static ptr create_conn_ptr(asio::io_context &io_context) {
-        return std::shared_ptr<tcp_connection>(new tcp_connection{io_context});
+        return (new tcp_connection{io_context})->shared_from_this();
     }
 
     tcp::socket &get_socket() { return socket_; }
