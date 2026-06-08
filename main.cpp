@@ -1,4 +1,3 @@
-#include "spdlog/spdlog.h"
 #include <chrono>
 #include <ctime>
 #include <iostream>
@@ -6,15 +5,16 @@
 #include <string>
 #include <vector>
 
+#include "spdlog/spdlog.h"
 #include <asio.hpp>
-using namespace asio::ip;
 
-constexpr unsigned short PORT_NUM = 10001;
+using asio::ip::tcp;
+
+constexpr uint16_t PORT_NUM = 10001;
 
 std::string make_daytime_string() {
-    using namespace std; // For time_t, time and ctime;
-    time_t now = time(0);
-    return ctime(&now);
+    std::time_t now = std::time(0);
+    return std::ctime(&now);
 }
 
 class tcp_connection : std::enable_shared_from_this<tcp_connection> {
@@ -43,7 +43,7 @@ class tcp_connection : std::enable_shared_from_this<tcp_connection> {
   private:
     tcp::socket socket_;
     std::string message_;
-    tcp_connection(asio::io_context &io_context) : socket_{io_context} {}
+    explicit tcp_connection(asio::io_context &io_context) : socket_{io_context} {}
 };
 
 class tcp_server {
@@ -59,8 +59,7 @@ class tcp_server {
             conn_ptr->get_socket(),
             std::bind(
                 &tcp_server::handle_accept, this, conn_ptr,
-                std::placeholders::_1)); // TODO: check if std::placeholders::_1
-                                         // actually works?
+                std::placeholders::_1));
     }
 
     void handle_accept(tcp_connection::ptr new_conn,

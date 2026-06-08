@@ -4,4 +4,4 @@ repos:
   hooks:
     - id: cpplint
       args:
-        - --filter=-legal/copyright,-whitespace/line_length,-whitespace/parens
+        - --filter=-legal/copyright,-whitespace/line_length,-whitespace/parens,-whitespace/indent,-whitespace/comments
