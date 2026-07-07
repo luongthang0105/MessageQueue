@@ -19,9 +19,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(asio)
 
-add_executable(MessageQueue src/main.cpp)
+add_executable(MessageQueue 
+    src/main.cpp
+    src/server/TCPConnection.cpp
+    src/server/TCPServer.cpp
+)
 
 target_link_libraries(MessageQueue PRIVATE spdlog::spdlog)
 
-target_include_directories(MessageQueue PRIVATE ${asio_SOURCE_DIR}/asio/include)
+target_include_directories(MessageQueue PRIVATE
+    src
+    ${asio_SOURCE_DIR}/asio/include
+)
 target_compile_definitions(MessageQueue PRIVATE ASIO_STANDALONE) # signals that we use standalone asio, not with boost

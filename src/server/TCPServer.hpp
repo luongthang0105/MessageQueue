@@ -6,7 +6,7 @@
 
 #include "spdlog/spdlog.h"
 #include <asio.hpp>
-#include "src/server/TCPConnection.hpp"
+#include "server/TCPConnection.hpp"
 
 using asio::ip::tcp;
 
