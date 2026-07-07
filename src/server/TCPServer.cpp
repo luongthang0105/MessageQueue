@@ -23,7 +23,7 @@ void TCPServer::handle_accept(TCPConnection::ptr new_conn, const asio::error_cod
 }
 
 TCPServer::TCPServer() {
-    SPDLOG_INFO("Starting TCP Server!");
+    SPDLOG_INFO("Starting TCP Server at port {}!", TCPServer::PORT_NUM);
     start_accept();
     io_context_.run();
 }

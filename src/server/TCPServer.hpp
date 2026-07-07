@@ -10,10 +10,10 @@
 
 using asio::ip::tcp;
 
-constexpr uint16_t PORT_NUM = 10001;
-
 class TCPServer {
   public:
+    static constexpr uint16_t PORT_NUM = 10001;
+
     TCPServer();
     asio::io_context &get_io_context() { return io_context_; }
 
