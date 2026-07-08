@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.27)
 project(MessageQueue)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -32,3 +32,15 @@ target_include_directories(MessageQueue PRIVATE
     ${asio_SOURCE_DIR}/asio/include
 )
 target_compile_definitions(MessageQueue PRIVATE ASIO_STANDALONE) # signals that we use standalone asio, not with boost
+
+# Generating documentation with Doxygen
+find_package(Doxygen)
+
+if(Doxygen_FOUND)
+  doxygen_add_docs(
+    docs 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    ALL
+    CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.docs
+  )
+endif()
