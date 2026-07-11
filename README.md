@@ -10,6 +10,7 @@ cmake -S . -B build -DCMAKE_CXX_COMPILER=g++-14
 cd build
 make && ./MessageQueue
 ```
+Running `make` will also create a Doxygen documentation of this project at the `docs/` folder of the project root directory.
 
 To contribute, make sure to setup git commit hooks:
 ```bash
