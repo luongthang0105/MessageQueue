@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.27)
 project(MessageQueue)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -19,9 +19,28 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(asio)
 
-add_executable(MessageQueue src/main.cpp)
+add_executable(MessageQueue 
+    src/main.cpp
+    src/server/TCPConnection.cpp
+    src/server/TCPServer.cpp
+)
 
 target_link_libraries(MessageQueue PRIVATE spdlog::spdlog)
 
-target_include_directories(MessageQueue PRIVATE ${asio_SOURCE_DIR}/asio/include)
+target_include_directories(MessageQueue PRIVATE
+    src
+    ${asio_SOURCE_DIR}/asio/include
+)
 target_compile_definitions(MessageQueue PRIVATE ASIO_STANDALONE) # signals that we use standalone asio, not with boost
+
+# Generating documentation with Doxygen
+find_package(Doxygen)
+
+if(Doxygen_FOUND)
+  doxygen_add_docs(
+    docs 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    ALL
+    CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.docs
+  )
+endif()
