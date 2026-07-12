@@ -1,8 +1,9 @@
-#pragma once
+#ifndef SRC_MESSAGEQUEUE_TOPIC_HPP_
+#define SRC_MESSAGEQUEUE_TOPIC_HPP_
+
 #include <string>
 #include <unordered_map>
 #include <vector>
-
 
 template<typename T>
 class Topic {
@@ -29,3 +30,5 @@ class Topic {
         std::string topic_name_;
         std::unordered_map<std::string, Partition> partitions_;
 };
+
+#endif // SRC_MESSAGEQUEUE_TOPIC_HPP_
