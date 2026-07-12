@@ -9,23 +9,23 @@ class Topic {
     public:
         using Partition = std::vector<T>;
 
-        explicit Topic(std::string topicName): topicName_{topicName} {};
+        explicit Topic(std::string topic_name): topic_name_{topic_name} {};
 
         /**
          * @brief Push an item to the end of a partition.
          */
-        void push_item(std::string partitionKey, T item);
+        void push_item(std::string partition_key, T item);
 
         /**
          * @brief Get an item from a partition, with an offset from the last item of the partition.
          */
-        T get_item(std::string partitionKey, size_t offset) const;
+        T get_item(std::string partition_key, size_t offset) const;
 
-        T get_last_item(std::string partitionKey) const {
-            return get_item(partitionKey, 0);
+        T get_last_item(std::string partition_key) const {
+            return get_item(partition_key, 0);
         }
 
     private:
-        std::string topicName_;
+        std::string topic_name_;
         std::unordered_map<std::string, Partition> partitions_;
 };
