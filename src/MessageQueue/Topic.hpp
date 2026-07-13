@@ -27,6 +27,7 @@ class Topic {
         }
 
     private:
+        /** \todo try use string_view? */
         std::string topic_name_;
         std::unordered_map<std::string, Partition> partitions_;
 };
