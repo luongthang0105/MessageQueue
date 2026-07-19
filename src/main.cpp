@@ -16,6 +16,9 @@ int main() {
         TCPServer server{};
     } catch (std::exception &e) {
         SPDLOG_ERROR("Exception: {}", e.what());
+    } catch (...) {
+        /** \todo: try do some state saving here? */
+        SPDLOG_ERROR("Unexpected exception caught!");
     }
     return 0;
 }
