@@ -13,7 +13,7 @@ void TCPServer::start_accept() {
 
 void TCPServer::handle_accept(TCPConnection::ptr new_conn, const asio::error_code &ec) {
     SPDLOG_INFO("Accepted a connection!");
-    SPDLOG_DEBUG("Try print ec: {}", ec.message());
+
     if (!ec) {
         new_conn->start();
     }
