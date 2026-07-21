@@ -1,6 +1,6 @@
 #include <array>
-#include <asio.hpp>
 #include <iostream>
+#include <asio.hpp>
 
 using asio::ip::tcp;
 
@@ -20,18 +20,23 @@ int main(int argc, char *argv[]) {
         tcp::socket socket(io_context);
         asio::connect(socket, endpoints);
 
-        for (;;) {
+        // for (;;)
+        {
             std::array<char, 128> buf;
             std::error_code error;
 
-            size_t len = socket.read_some(asio::buffer(buf), error);
-
-            if (error == asio::error::eof)
-                break; // Connection closed cleanly by peer.
-            else if (error)
-                throw std::system_error(error); // Some other error.
-
+            size_t len = socket.write_some(
+                asio::buffer("topic create football_matches\n"), error);
+            std::cout << "> ";
             std::cout.write(buf.data(), len);
+            // size_t len = socket.read_some(asio::buffer(buf), error);
+
+            // if (error == asio::error::eof)
+            //     break; // Connection closed cleanly by peer.
+            // else if (error)
+            //     throw std::system_error(error); // Some other error.
+
+            // std::cout.write(buf.data(), len);
         }
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
