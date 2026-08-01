@@ -23,20 +23,30 @@ int main(int argc, char *argv[]) {
         // for (;;)
         {
             std::array<char, 128> buf;
-            std::error_code error;
+            asio::error_code error;
 
-            size_t len = socket.write_some(
+            socket.write_some(
                 asio::buffer("topic create football_matches\n"), error);
+
+            if (error) {
+                throw std::system_error(error);
+            }
+
             std::cout << "> ";
+
+            size_t len = socket.read_some(asio::buffer(buf), error);
+
+            if (error == asio::error::eof) {
+                std::cout << "Connection closed cleanly by peer.";
+                // break;
+            } else if (error) {
+                throw std::system_error(error); // Some other error.
+            }
+
             std::cout.write(buf.data(), len);
-            // size_t len = socket.read_some(asio::buffer(buf), error);
 
-            // if (error == asio::error::eof)
-            //     break; // Connection closed cleanly by peer.
-            // else if (error)
-            //     throw std::system_error(error); // Some other error.
-
-            // std::cout.write(buf.data(), len);
+            getchar();
+            socket.write_some(asio::buffer("quit\n"));
         }
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
