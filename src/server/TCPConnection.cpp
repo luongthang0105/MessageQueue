@@ -54,6 +54,8 @@ void TCPConnection::start() {
         //                             std::placeholders::_1,
         //                             std::placeholders::_2));
     }
+
+    SPDLOG_INFO("Connection closed!");
 }
 
 void TCPConnection::handle_write(const asio::error_code &ec,

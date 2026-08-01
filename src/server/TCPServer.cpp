@@ -1,6 +1,8 @@
 #include "server/TCPServer.hpp"
 
 void TCPServer::start_accept() {
+    SPDLOG_INFO("Open to accepting new connections.");
+
     TCPConnection::ptr conn_ptr =
         TCPConnection::create_conn_ptr(io_context_);
 
