@@ -4,8 +4,8 @@
 #include <memory>
 #include <string>
 
-#include <asio.hpp>
 #include "spdlog/spdlog.h"
+#include <asio.hpp>
 
 using asio::ip::tcp;
 
@@ -16,10 +16,10 @@ class TCPConnection : std::enable_shared_from_this<TCPConnection> {
     typedef std::shared_ptr<TCPConnection> ptr;
 
     static ptr create_conn_ptr(asio::io_context &io_context) {
-        return std::shared_ptr<TCPConnection>(new TCPConnection {io_context});
+        return std::shared_ptr<TCPConnection>(new TCPConnection{io_context});
     }
 
-    tcp::socket& get_socket();
+    tcp::socket &get_socket();
 
     /**
      * @brief On connection, prepare messages and respond back to the client.
@@ -31,7 +31,8 @@ class TCPConnection : std::enable_shared_from_this<TCPConnection> {
   private:
     tcp::socket socket_;
     std::string message_;
-    explicit TCPConnection(asio::io_context &io_context) : socket_{io_context} {}
+    explicit TCPConnection(asio::io_context &io_context)
+        : socket_{io_context} {}
 };
 
 #endif // SRC_SERVER_TCPCONNECTION_HPP_

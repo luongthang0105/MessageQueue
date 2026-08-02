@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 
+#include "server/TCPServer.hpp"
 #include "spdlog/spdlog.h"
 #include <asio.hpp>
-#include "server/TCPServer.hpp"
 
 using asio::ip::tcp;
 
