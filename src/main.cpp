@@ -1,3 +1,4 @@
+#include <asio.hpp>
 #include <chrono>
 #include <ctime>
 #include <iostream>
@@ -7,7 +8,6 @@
 
 #include "server/TCPServer.hpp"
 #include "spdlog/spdlog.h"
-#include <asio.hpp>
 
 using asio::ip::tcp;
 

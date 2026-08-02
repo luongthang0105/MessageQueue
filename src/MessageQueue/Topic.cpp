@@ -1,4 +1,5 @@
 #include "MessageQueue/Topic.hpp"
+
 #include <exception>
 #include <format>
 #include <string>
@@ -19,8 +20,7 @@ T Topic<T>::get_item(std::string_view partition_key, size_t offset) const {
     Partition &partition = *partition_it;
     if (offset >= partition.size()) {
         throw std::invalid_argument(std::format(
-            "Partition of key \"" {} "\" have size = {}, where offset = ",
-            partition_key, partition.size(), offset));
+            "Partition of key \"" {} "\" have size = {}, where offset = ", partition_key, partition.size(), offset));
     }
 
     return partition[partition.size() - offset];

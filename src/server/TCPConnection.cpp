@@ -1,8 +1,10 @@
 #include "server/TCPConnection.hpp"
+
 #include <ctime>
 #include <iostream>
 #include <string>
 #include <utility>
+
 #include "MessageQueue/TopicManager.hpp"
 
 std::string make_daytime_string() {
@@ -40,8 +42,7 @@ void TCPConnection::start() {
                 if (const auto err = topic_manager.create_topic(name); !err) {
                     reply = std::format("Error: {}", err.value().to_string());
                 } else {
-                    reply = std::format(
-                        "Topic \"{}\" created successfully.", name);
+                    reply = std::format("Topic \"{}\" created successfully.", name);
                 }
             } else if (operation == "populate") {
                 std::string name;
@@ -52,9 +53,7 @@ void TCPConnection::start() {
                 if (const auto err = topic_manager.populate(name, partition_key, item); !err) {
                     reply = std::format("Error: {}", err.value().to_string());
                 } else {
-                    reply = std::format(
-                        "Item added to topic \"{}\" at partition \"{}\"", name, partition_key
-                    );
+                    reply = std::format("Item added to topic \"{}\" at partition \"{}\"", name, partition_key);
                 }
             }
         } else if (command == "quit") {

@@ -14,24 +14,21 @@ struct MQErrorContext {
 };
 
 class MQErrors {
-  public:
-    MQErrors(MQErrorTypes type, MQErrorContext context)
-        : type_{type}, context_{context} {};
+   public:
+    MQErrors(MQErrorTypes type, MQErrorContext context) : type_{type}, context_{context} {};
 
     std::string_view to_string() const {
         switch (type_) {
-        case MQErrorTypes::TopicAlreadyExist:
-            return std::format("Topic \"{}\" already existed.",
-                               context_.topic_name);
-        case MQErrorTypes::TopicNotExist:
-            return std::format("Topic \"{}\" does not exist.",
-                               context_.topic_name);
-        default:
-            return "Unknown MQErrors.";
+            case MQErrorTypes::TopicAlreadyExist:
+                return std::format("Topic \"{}\" already existed.", context_.topic_name);
+            case MQErrorTypes::TopicNotExist:
+                return std::format("Topic \"{}\" does not exist.", context_.topic_name);
+            default:
+                return "Unknown MQErrors.";
         }
     }
 
-  private:
+   private:
     MQErrorTypes type_;
     MQErrorContext context_;
 };

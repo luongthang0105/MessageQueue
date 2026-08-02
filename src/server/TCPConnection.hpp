@@ -1,18 +1,18 @@
 #ifndef SRC_SERVER_TCPCONNECTION_HPP_
 #define SRC_SERVER_TCPCONNECTION_HPP_
 
+#include <asio.hpp>
 #include <memory>
 #include <string>
 
 #include "spdlog/spdlog.h"
-#include <asio.hpp>
 
 using asio::ip::tcp;
 
 std::string make_daytime_string();
 
 class TCPConnection : std::enable_shared_from_this<TCPConnection> {
-  public:
+   public:
     typedef std::shared_ptr<TCPConnection> ptr;
 
     static ptr create_conn_ptr(asio::io_context &io_context) {
@@ -28,11 +28,10 @@ class TCPConnection : std::enable_shared_from_this<TCPConnection> {
 
     void handle_write(const asio::error_code &ec, size_t bytes_transferred);
 
-  private:
+   private:
     tcp::socket socket_;
     std::string message_;
-    explicit TCPConnection(asio::io_context &io_context)
-        : socket_{io_context} {}
+    explicit TCPConnection(asio::io_context &io_context) : socket_{io_context} {}
 };
 
-#endif // SRC_SERVER_TCPCONNECTION_HPP_
+#endif  // SRC_SERVER_TCPCONNECTION_HPP_

@@ -1,23 +1,23 @@
 #ifndef SRC_SERVER_TCPSERVER_HPP_
 #define SRC_SERVER_TCPSERVER_HPP_
 
+#include <asio.hpp>
 #include <memory>
 #include <string>
 
 #include "server/TCPConnection.hpp"
 #include "spdlog/spdlog.h"
-#include <asio.hpp>
 
 using asio::ip::tcp;
 
 class TCPServer {
-  public:
+   public:
     static constexpr uint16_t PORT_NUM = 10001;
 
     TCPServer();
     asio::io_context &get_io_context() { return io_context_; }
 
-  private:
+   private:
     asio::io_context io_context_{};
     tcp::acceptor acceptor_{io_context_, tcp::endpoint{tcp::v4(), PORT_NUM}};
 
@@ -30,4 +30,4 @@ class TCPServer {
     void handle_accept(TCPConnection::ptr new_conn, const asio::error_code &ec);
 };
 
-#endif // SRC_SERVER_TCPSERVER_HPP_
+#endif  // SRC_SERVER_TCPSERVER_HPP_
