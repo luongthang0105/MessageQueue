@@ -3,17 +3,15 @@
 void TCPServer::start_accept() {
     SPDLOG_INFO("Open to accepting new connections.");
 
-    TCPConnection::ptr conn_ptr =
-        TCPConnection::create_conn_ptr(io_context_);
+    TCPConnection::ptr conn_ptr = TCPConnection::create_conn_ptr(io_context_);
 
-    acceptor_.async_accept(
-        conn_ptr->get_socket(),
-        std::bind(
-            &TCPServer::handle_accept, this, conn_ptr,
-            std::placeholders::_1));
+    acceptor_.async_accept(conn_ptr->get_socket(),
+                           std::bind(&TCPServer::handle_accept, this, conn_ptr,
+                                     std::placeholders::_1));
 }
 
-void TCPServer::handle_accept(TCPConnection::ptr new_conn, const asio::error_code &ec) {
+void TCPServer::handle_accept(TCPConnection::ptr new_conn,
+                              const asio::error_code &ec) {
     SPDLOG_INFO("Accepted a connection!");
 
     if (!ec) {

@@ -4,9 +4,9 @@
 #include <memory>
 #include <string>
 
+#include "server/TCPConnection.hpp"
 #include "spdlog/spdlog.h"
 #include <asio.hpp>
-#include "server/TCPConnection.hpp"
 
 using asio::ip::tcp;
 
@@ -22,7 +22,8 @@ class TCPServer {
     tcp::acceptor acceptor_{io_context_, tcp::endpoint{tcp::v4(), PORT_NUM}};
 
     /**
-     * @brief Creates a TCP socket, listening to new connections. Calls @ref TCPServer::handle_accept() after accepting a new connection.
+     * @brief Creates a TCP socket, listening to new connections. Calls @ref
+     * TCPServer::handle_accept() after accepting a new connection.
      */
     void start_accept();
 

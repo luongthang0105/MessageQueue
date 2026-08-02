@@ -1,0 +1,1 @@
+git ls-files src | grep -E '\.(c|cc|cpp|cxx|h|hh|hpp|hxx)$' | xargs clang-format -i
