@@ -37,29 +37,30 @@ void TCPConnection::start() {
                 std::string name;
                 line_stream >> name;
 
-                if (!topic_manager.create_topic(name)) {
-                    reply = std::format("Error: Topic \"{}\" existed.", name);
+                if (const auto err = topic_manager.create_topic(name); !err) {
+                    reply = std::format("Error: {}", err.value().to_string());
                 } else {
                     reply = std::format(
-                        "Succes: Topic \"{}\" created successfully.", name);
+                        "Topic \"{}\" created successfully.", name);
+                }
+            } else if (operation == "populate") {
+                std::string name;
+                std::string partition_key;
+                DefaultPartitionItem item;
+
+                line_stream >> partition_key >> item;
+                if (const auto err = topic_manager.populate(name, partition_key, item); !err) {
+                    reply = std::format("Error: {}", err.value().to_string());
+                } else {
+                    reply = std::format(
+                        "Item added to topic \"{}\" at partition \"{}\"", name, partition_key
+                    );
                 }
             }
         } else if (command == "quit") {
             break;
         }
-
-        asio::write(socket_, asio::buffer(reply));
-        // asio::async_write(socket_, asio::buffer(message_),
-        //                     std::bind(&TCPConnection::handle_write, this,
-        //                             std::placeholders::_1,
-        //                             std::placeholders::_2));
     }
 
     SPDLOG_INFO("Connection closed!");
-}
-
-void TCPConnection::handle_write(const asio::error_code &ec,
-                                 size_t bytes_transferred) {
-    SPDLOG_DEBUG("Try print ec: {}", ec.message());
-    SPDLOG_INFO("I've sent {} bytes back!", bytes_transferred);
 }

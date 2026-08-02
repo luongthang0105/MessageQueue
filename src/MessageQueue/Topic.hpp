@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include <vector>
 
+using DefaultPartitionItem = std::string;
+using DefaultTopic = Topic<DefaultPartitionItem>;
+
 template<typename T>
 class Topic {
     public:
