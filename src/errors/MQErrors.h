@@ -6,29 +6,19 @@
 enum class MQErrorTypes {
     TopicNotExist,
     TopicAlreadyExist,
-};
-
-struct MQErrorContext {
-    std::string partition_key;
-    std::string topic_name;
+    PartitionKeyNotExist,
+    OffsetExceedPartitionSize
 };
 
 class MQErrors {
    public:
-    MQErrors(MQErrorTypes type, MQErrorContext context) : type_{type}, context_{context} {};
+    MQErrors(MQErrorTypes type, std::string message) : type_{type}, message_{message} {};
 
     std::string_view to_string() const {
-        switch (type_) {
-            case MQErrorTypes::TopicAlreadyExist:
-                return std::format("Topic \"{}\" already existed.", context_.topic_name);
-            case MQErrorTypes::TopicNotExist:
-                return std::format("Topic \"{}\" does not exist.", context_.topic_name);
-            default:
-                return "Unknown MQErrors.";
-        }
+        return message_;
     }
 
    private:
     MQErrorTypes type_;
-    MQErrorContext context_;
+    std::string message_;
 };

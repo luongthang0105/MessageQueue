@@ -10,7 +10,7 @@ class TopicManager {
     std::optional<MQErrors> create_topic(std::string_view topic_name) {
         bool insert_successful = topics.emplace(std::make_pair(topic_name, DefaultTopic{topic_name})).second;
         if (!insert_successful) {
-            return MQErrors(MQErrorTypes::TopicAlreadyExist, MQErrorContext{.topic_name = std::string{topic_name}});
+            return MQErrors(MQErrorTypes::TopicAlreadyExist, std::format("Topic \"{}\" already existed.", topic_name));
         }
 
         return std::nullopt;
@@ -18,17 +18,28 @@ class TopicManager {
 
     std::optional<MQErrors> populate(std::string_view topic_name, std::string_view partition_key,
                                      DefaultPartitionItem item) {
-        auto it = topics.find(std::string{topic_name});
-        if (it == topics.end()) {
-            return MQErrors(MQErrorTypes::TopicNotExist, MQErrorContext{.topic_name = std::string{topic_name}});
+        if (auto topic = get_topic(topic_name)) {
+            topic.value().get().push_item(partition_key, item);
+            return std::nullopt;
+        } else {
+            // \todo: this can cause performance issue because we pass MQErrors by value
+            return topic.error();
         }
-
-        auto& topic = *it;
-        topic.push_item(partition_key, item);
-
-        return std::nullopt;
+        
+    }
     }
 
    private:
     std::unordered_map<std::string, DefaultTopic> topics;
+
+    std::expected<std::reference_wrapper<DefaultTopic>, MQErrors> get_topic(std::string_view topic_name) {
+        auto it = topics.find(std::string{topic_name});
+        if (it == topics.end()) {
+            return std::unexpected(MQErrors{
+                MQErrorTypes::TopicNotExist, 
+                std::format("Topic \"{}\" does not exist.", topic_name)
+            });
+        }
+        return (*it).second;
+    }
 };
