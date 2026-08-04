@@ -12,12 +12,7 @@ make && ./MessageQueue
 ```
 Running `make` will also create a Doxygen documentation of this project at the `docs/` folder of the project root directory.
 
-To contribute, make sure to setup git commit hooks:
-```bash
-sudo apt install pre-commit
-pre-commit install 
-```
-Currently, the pre-commit hook includes `cpplint` (see `.pre-commit-config.yaml`). If you are on VSCode, and want to run lint fix, try run `Format Document With` then choose `Clang-Format`.
+To contribute, make sure you run [lint.sh](/lint.sh) before commiting.
 
 ## Architectural Design
 [MessageQueue_V1](https://drive.google.com/file/d/19TWJBxTqIwX-nk3NQcdMmgxa18oyShT9/view?usp=drive_link).
