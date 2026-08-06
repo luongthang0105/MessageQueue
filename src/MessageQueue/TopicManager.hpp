@@ -1,4 +1,5 @@
 #pragma once
+#include <expected>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -18,15 +19,24 @@ class TopicManager {
 
     std::optional<MQErrors> populate(std::string_view topic_name, std::string_view partition_key,
                                      DefaultPartitionItem item) {
-        if (auto topic = get_topic(topic_name)) {
-            topic.value().get().push_item(partition_key, item);
+        if (auto exp_topic = get_topic(topic_name)) {
+            exp_topic.value().get().push_item(partition_key, item);
             return std::nullopt;
         } else {
             // \todo: this can cause performance issue because we pass MQErrors by value
-            return topic.error();
+            return exp_topic.error();
         }
         
     }
+
+    std::expected<std::string, MQErrors> consume(std::string_view topic_name, std::string_view partition_key,
+                                                 size_t offset) {
+        if (auto exp_topic = get_topic(topic_name)) {
+            return exp_topic.value().get().get_item(partition_key, offset);
+        } else {
+            // \todo: this can cause performance issue because we pass MQErrors by value
+            return std::unexpected(exp_topic.error());
+        }
     }
 
    private:
