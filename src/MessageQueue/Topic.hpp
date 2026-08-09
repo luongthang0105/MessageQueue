@@ -2,6 +2,7 @@
 #include "errors/MQErrors.h"
 
 #include <expected>
+#include <functional>
 #include <string>
 #include <string_view>
 #include <unordered_map>

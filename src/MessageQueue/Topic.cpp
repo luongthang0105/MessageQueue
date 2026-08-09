@@ -4,6 +4,7 @@
 #include <exception>
 #include <expected>
 #include <format>
+#include <functional>
 #include <string>
 
 template <typename T>
