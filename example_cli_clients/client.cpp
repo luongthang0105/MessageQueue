@@ -19,12 +19,12 @@ int main(int argc, char *argv[]) {
 
         tcp::socket socket(io_context);
         asio::connect(socket, endpoints);
-
+        std::cout << "This is a MQ client!\n";
         for (;;)
         {
             std::string command;
-            std::cin >> command;
-            
+            std::getline(std::cin, command);
+
             if (command == "quit") {
                 socket.write_some(asio::buffer("quit"));
                 goto close_socket;
@@ -38,19 +38,19 @@ int main(int argc, char *argv[]) {
                 throw std::system_error(error);
             }
 
-            std::cout << "> ";
 
             std::array<char, 128> buf;
             size_t len = socket.read_some(asio::buffer(buf), error);
 
             if (error == asio::error::eof) {
-                std::cout << "Connection closed cleanly by peer.";
+                std::cout << "Connection closed cleanly by peer." << std::endl;
                 goto close_socket;
             } else if (error) {
                 throw std::system_error(error); // Some other error.
             }
 
-            std::cout.write(buf.data(), len);
+            std::cout << "> ";
+            std::cout.write(buf.data(), len) << std::endl;
         }
         close_socket:
             socket.close();
