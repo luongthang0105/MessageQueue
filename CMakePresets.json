@@ -2,7 +2,7 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "debug-preset",
+      "name": "debug",
       "displayName": "Debug Build",
       "binaryDir": "${sourceDir}/build/debug",
       "cacheVariables": {
@@ -11,7 +11,7 @@
       }
     },
     {
-      "name": "normal-preset",
+      "name": "normal",
       "displayName": "Normal Build",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
