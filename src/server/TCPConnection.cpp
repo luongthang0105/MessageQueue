@@ -54,8 +54,17 @@ void TCPConnection::start() {
                     reply = std::format("Item added to topic \"{}\" at partition \"{}\"", name, partition_key);
                 } else {
                     reply = std::format("Error: {}", err.value().to_string());
+                }
+            } else if (operation == "consume") {
+                std::string name;
+                std::string partition_key;
+                size_t offset;
+
+                line_stream >> name >> partition_key >> offset;
+                if (const auto exp_item = topic_manager.consume(name, partition_key, offset)) {
+                    reply = std::format("{}", exp_item.value());
                 } else {
-                    reply = std::format("Item added to topic \"{}\" at partition \"{}\"", name, partition_key);
+                    reply = std::format("Error: {}", exp_item.error().to_string());
                 }
             }
         } else if (command == "quit") {
