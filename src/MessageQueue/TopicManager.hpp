@@ -27,7 +27,6 @@ class TopicManager {
             // \todo: this can cause performance issue because we pass MQErrors by value
             return exp_topic.error();
         }
-        
     }
 
     std::expected<std::string, MQErrors> consume(std::string_view topic_name, std::string_view partition_key,
@@ -46,10 +45,8 @@ class TopicManager {
     std::expected<std::reference_wrapper<DefaultTopic>, MQErrors> get_topic(std::string_view topic_name) {
         auto it = topics.find(std::string{topic_name});
         if (it == topics.end()) {
-            return std::unexpected(MQErrors{
-                MQErrorTypes::TopicNotExist, 
-                std::format("Topic \"{}\" does not exist.", topic_name)
-            });
+            return std::unexpected(
+                MQErrors{MQErrorTypes::TopicNotExist, std::format("Topic \"{}\" does not exist.", topic_name)});
         }
         return (*it).second;
     }
