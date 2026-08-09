@@ -39,11 +39,11 @@ class Topic {
         if (offset >= partition.size()) {
             return std::unexpected(MQErrors {
                 MQErrorTypes::OffsetExceedPartitionSize,
-                std::format("Partition of key \"{}\" have size = {}, where offset = ", partition_key, partition.size(), offset)
+                std::format("Partition of key \"{}\" have size = {}, where offset = {}", partition_key, partition.size(), offset)
             });
         }
 
-        return partition[partition.size() - offset];
+        return partition[partition.size() - 1 - offset];
     }
 
     std::expected<T, MQErrors> get_last_item(std::string_view partition_key) const { return get_item(partition_key, 0); }
