@@ -39,18 +39,20 @@ void TCPConnection::start() {
                 std::string name;
                 line_stream >> name;
 
-                if (const auto err = topic_manager.create_topic(name); !err) {
-                    reply = std::format("Error: {}", err.value().to_string());
-                } else {
+                if (const auto err = topic_manager.create_topic(name)) {
                     reply = std::format("Topic \"{}\" created successfully.", name);
+                } else {
+                    reply = std::format("Error: {}", err.value().to_string());
                 }
             } else if (operation == "populate") {
                 std::string name;
                 std::string partition_key;
                 DefaultPartitionItem item;
 
-                line_stream >> partition_key >> item;
-                if (const auto err = topic_manager.populate(name, partition_key, item); !err) {
+                line_stream >> name >> partition_key >> item;
+                if (const auto err = topic_manager.populate(name, partition_key, item)) {
+                    reply = std::format("Item added to topic \"{}\" at partition \"{}\"", name, partition_key);
+                } else {
                     reply = std::format("Error: {}", err.value().to_string());
                 } else {
                     reply = std::format("Item added to topic \"{}\" at partition \"{}\"", name, partition_key);
