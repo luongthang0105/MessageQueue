@@ -7,7 +7,7 @@ using asio::ip::tcp;
 int main(int argc, char *argv[]) {
     try {
         if (argc != 3) {
-            std::cerr << "Usage: ./MQProducer <host> <port>" << std::endl;
+            std::cerr << "Usage: ./MQConsumer <host> <port>" << std::endl;
             return 1;
         }
 
@@ -19,35 +19,41 @@ int main(int argc, char *argv[]) {
 
         tcp::socket socket(io_context);
         asio::connect(socket, endpoints);
-
-        // for (;;)
+        std::cout << "This is a MQ client!\n";
+        for (;;)
         {
-            std::array<char, 128> buf;
+            std::string command;
+            std::getline(std::cin, command);
+
+            if (command == "quit") {
+                socket.write_some(asio::buffer("quit"));
+                goto close_socket;
+            }
+
             asio::error_code error;
 
-            socket.write_some(
-                asio::buffer("topic create football_matches\n"), error);
+            socket.write_some(asio::buffer(command + '\n'), error);
 
             if (error) {
                 throw std::system_error(error);
             }
 
-            std::cout << "> ";
 
+            std::array<char, 128> buf;
             size_t len = socket.read_some(asio::buffer(buf), error);
 
             if (error == asio::error::eof) {
-                std::cout << "Connection closed cleanly by peer.";
-                // break;
+                std::cout << "Connection closed cleanly by peer." << std::endl;
+                goto close_socket;
             } else if (error) {
                 throw std::system_error(error); // Some other error.
             }
 
-            std::cout.write(buf.data(), len);
-
-            getchar();
-            socket.write_some(asio::buffer("quit\n"));
+            std::cout << "> ";
+            std::cout.write(buf.data(), len) << std::endl;
         }
+        close_socket:
+            socket.close();
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }

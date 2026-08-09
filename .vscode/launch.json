@@ -7,10 +7,18 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "LLDB Debug",
+            "name": "LLDB Debug Main",
             "program": "${workspaceFolder}/build/debug/MessageQueue",
             "args": [],
             "cwd": "${workspaceFolder}"
-        }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "LLDB Debug Client",
+            "program": "${workspaceFolder}/example_cli_clients/build/debug/MQClient",
+            "args": ["localhost", "10001"],
+            "cwd": "${workspaceFolder}"
+        },
     ]
 }
