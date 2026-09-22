@@ -38,17 +38,27 @@ cd build && make
 
 You can now type in the commands above to interact with the MQ server.
 
-## Functional Requirements
-Functional requirements are inspired by an overview of message queue [video](https://www.youtube.com/watch?v=1ISRd0bS714):
-- [ ] APIs
-  - [ ] Consumers APIs
-    - When started developing, link this to the API section
-  - [ ] Producers APIs
-    - When started developing, link this to the API section
-  - [ ] Communicating via a TCP connection..?
-- [ ] System Architecture
-  - [ ] Topics
-  - [ ] Partitions
+## Functionalities checklist
+These are the functionalities I have had in mind, inspired by [this video](https://www.youtube.com/watch?v=1ISRd0bS714):
+
+- MessageQueue as TCP server
+  - [x] Accepting TCP connections
+  - [ ] Accepting *concurrent* TCP connections (more than 1 at a time)
+- CLI applications
+  - [x] Minimalistic CLI client
+    - Forwards whatever command you type into it. I'd prefer using an SDK though, this is too tedious!
+- APIs
+  - Topic APIs
+    - [x] Create a topic
+  - Consumers APIs
+    - [ ] Consumer subscribing to a topic
+    - [x] Consuming item at given offset from a partition of a topic
+  - Producers APIs
+    - [x] Producing item to a partition within a topic
+- SDK - the idea is that it can be used like the code example in [this](https://www.hellointerview.com/learn/system-design/deep-dives/kafka)
+  - [ ] Consumers SDK
+  - [ ] Producers SDK
+- [ ] Persist data into a log file
 - [ ] Message sending mechanisms (or, Delivery Guarantees):
   - [ ] At-Least-Once
   - [ ] At-Most-Once
@@ -57,17 +67,3 @@ Functional requirements are inspired by an overview of message queue [video](htt
 - [ ] Dead-lettered-queue
 - [ ] Replica (fault tolerance)
 - [ ] Message Replay mechanism
-
-## Non-functional Requirements
-
-## APIs
-Besides the Kafka server implementation, I'm also going to write a Kafka client library so producers/consumers can easily use it.
-### Producer APIs
-- connect to a Kafka server (broker)
-- set the topic
-- produce it
-### Consumer APIs
-- connect to a Kafka server
-- set the topic
-- choose partition
-- consumes it
