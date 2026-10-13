@@ -18,6 +18,7 @@ class TCPServer {
     asio::io_context &get_io_context() { return io_context_; }
 
    private:
+    std::shared_ptr<TopicManager> topic_manager_{};
     asio::io_context io_context_{};
     tcp::acceptor acceptor_{io_context_, tcp::endpoint{tcp::v4(), PORT_NUM}};
 
