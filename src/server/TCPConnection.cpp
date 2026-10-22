@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 
+#include "CLI/CLIHandler.hpp"
 #include "MessageQueue/TopicManager.hpp"
 
 std::string make_daytime_string() {
@@ -14,69 +15,34 @@ std::string make_daytime_string() {
 
 tcp::socket& TCPConnection::get_socket() { return socket_; }
 
-void TCPConnection::start() {
-    /**
-     * \todo: show a list of commands here
-     */
-    SPDLOG_INFO("Welcome to MessageQueue!");
+void TCPConnection::handle_read(std::shared_ptr<asio::streambuf> buffer, TCPConnection::ptr conn_ptr) {
+    std::optional<CLIHandler::Reply> opt_reply = CLIHandler::handle(std::istream{buffer.get()}, *topic_manager_);
 
-    TopicManager topic_manager{};
-    try {
-        while (true) {
-            asio::streambuf buffer;
-
-            asio::read_until(socket_, buffer, '\n');
-            std::istream line_stream{&buffer};
-
-            std::string reply;
-            std::string command;
-            line_stream >> command;
-
-            if (command == "topic") {
-                std::string operation;
-                line_stream >> operation;
-
-                if (operation == "create") {
-                    std::string name;
-                    line_stream >> name;
-
-                    if (const auto err = topic_manager.create_topic(name)) {
-                        reply = std::format("Error: {}", err.value().to_string());
-                    } else {
-                        reply = std::format("Topic \"{}\" created successfully.", name);
-                    }
-                } else if (operation == "populate") {
-                    std::string name;
-                    std::string partition_key;
-                    DefaultPartitionItem item;
-
-                    line_stream >> name >> partition_key >> item;
-                    if (const auto err = topic_manager.populate(name, partition_key, item)) {
-                        reply = std::format("Error: {}", err.value().to_string());
-                    } else {
-                        reply = std::format("Item added to topic \"{}\" at partition \"{}\"", name, partition_key);
-                    }
-                } else if (operation == "consume") {
-                    std::string name;
-                    std::string partition_key;
-                    size_t offset;
-
-                    line_stream >> name >> partition_key >> offset;
-                    if (const auto exp_item = topic_manager.consume(name, partition_key, offset)) {
-                        reply = std::format("{}", exp_item.value());
-                    } else {
-                        reply = std::format("Error: {}", exp_item.error().to_string());
-                    }
-                }
-            } else if (command == "quit") {
-                break;
-            }
-
-            asio::write(socket_, asio::buffer(reply));
-        }
-    } catch (std::exception& e) {
-        SPDLOG_ERROR("{}", e.what());
+    if (!opt_reply.has_value()) {
+        socket_.close();
+        SPDLOG_INFO("Connection closed!");
+        return;
     }
 
-    SPDLOG_INFO("Connection closed!");
+    socket_.async_write_some(asio::buffer(opt_reply.value()),
+                             [conn_ptr](const asio::error_code& ec, std::size_t bytes_transfered) {
+                                 if (!ec) {
+                                     conn_ptr->start(conn_ptr);
+                                 } else {
+                                     SPDLOG_ERROR("Failed to write response to client: {}", ec.message());
+                                 }
+                             });
+}
+
+void TCPConnection::start(TCPConnection::ptr conn_ptr) {
+    std::shared_ptr<asio::streambuf> buffer{std::make_shared<asio::streambuf>()};
+
+    asio::async_read_until(socket_, *buffer.get(), '\n',
+                           [conn_ptr, buffer](const asio::error_code& ec, std::size_t bytes_transfered) {
+                               if (!ec) {
+                                   conn_ptr->handle_read(buffer, conn_ptr);
+                               } else {
+                                   SPDLOG_ERROR("Failed to read input from client: {}", ec.message());
+                               }
+                           });
 }
