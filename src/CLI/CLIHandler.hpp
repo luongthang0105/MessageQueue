@@ -5,6 +5,7 @@
 #include <string>
 
 #include "MessageQueue/TopicManager.hpp"
+#include "spdlog/spdlog.h"
 
 class CLIHandler {
    public:
@@ -22,7 +23,8 @@ class CLIHandler {
             if (operation == "create") {
                 std::string name;
                 line_stream >> name;
-
+                
+                SPDLOG_DEBUG("Request: Create topic with name = {}", name);
                 if (const auto err = topic_manager.create_topic(name)) {
                     reply = std::format("Error: {}", err.value().to_string());
                 } else {
@@ -32,8 +34,9 @@ class CLIHandler {
                 std::string name;
                 std::string partition_key;
                 DefaultPartitionItem item;
-
                 line_stream >> name >> partition_key >> item;
+
+                SPDLOG_DEBUG("Request: Populate topic \"{}\" at partition key \"{}\" with an item", name, partition_key);
                 if (const auto err = topic_manager.populate(name, partition_key, item)) {
                     reply = std::format("Error: {}", err.value().to_string());
                 } else {
@@ -43,8 +46,9 @@ class CLIHandler {
                 std::string name;
                 std::string partition_key;
                 size_t offset;
-
                 line_stream >> name >> partition_key >> offset;
+
+                SPDLOG_DEBUG("Request: Consume topic \"{}\" at partition key \"{}\" at offset={}", name, partition_key, offset);
                 if (const auto exp_item = topic_manager.consume(name, partition_key, offset)) {
                     reply = std::format("{}", exp_item.value());
                 } else {

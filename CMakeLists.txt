@@ -26,6 +26,12 @@ add_executable(MessageQueue
 )
 
 target_link_libraries(MessageQueue PRIVATE spdlog::spdlog)
+option(SET_SPDLOG_DEBUG "Set SPDLOG level to Debug" OFF)
+if(SET_SPDLOG_DEBUG)
+    target_compile_definitions(MessageQueue PRIVATE
+        SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG
+    )
+endif()
 
 target_include_directories(MessageQueue PRIVATE
     src
