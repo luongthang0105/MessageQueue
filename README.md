@@ -70,4 +70,10 @@ These are the functionalities I have had in mind, inspired by [this video](https
 
 ## A humble demo
 
-<video src="./assets/demo-22-oct-2026.mkv" controls width="1080" height="540"></video>
+Original video is at [here](./assets/demo-22-oct-2026.mkv).
+
+Rendered video on Github is here: 
+
+https://github.com/user-attachments/assets/22825c62-47bd-4eb4-9362-fefc4d88d7fc
+
+
