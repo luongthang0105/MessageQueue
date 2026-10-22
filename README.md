@@ -67,3 +67,7 @@ These are the functionalities I have had in mind, inspired by [this video](https
 - [ ] Dead-lettered-queue
 - [ ] Replica (fault tolerance)
 - [ ] Message Replay mechanism
+
+## A humble demo
+
+<video src="./assets/demo-22-oct-2026.mkv" controls width="1080" height="540"></video>
