@@ -12,7 +12,7 @@
 using asio::ip::tcp;
 
 int main() {
-    spdlog::set_level(spdlog::level::from_str(std::string {SPDLOG_LEVEL_NAME_DEBUG.data()}));
+    spdlog::set_level(spdlog::level::from_str(std::string{SPDLOG_LEVEL_NAME_DEBUG.data()}));
 
     try {
         TCPServer server{};
